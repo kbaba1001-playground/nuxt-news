@@ -1,6 +1,22 @@
 <template>
   <div>
     <p>Nuxt News</p>
-    <md-button class="md-accent">SUBMIT</md-button>
+    <ul v-for="headline in headlines" :key="headline.id">
+      <li>{{ headline }}</li>
+    </ul>
   </div>
 </template>
+
+<script>
+export default {
+  async asyncData({ app }) {
+    const topHeadlines = await app.$axios.$get(
+      "http://newsapi.org/v2/top-headlines?country=us"
+    );
+
+    return {
+      headlines: topHeadlines.articles
+    };
+  }
+};
+</script>
