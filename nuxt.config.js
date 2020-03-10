@@ -45,12 +45,19 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ["@nuxtjs/axios"],
+  modules: ["@nuxtjs/axios", "@nuxtjs/proxy"],
   /*
    * Axios module configuration
    */
   axios: {
-    credentials: true
+    credentials: true,
+    proxy: true
+  },
+  proxy: {
+    "/api/": {
+      target: "http://newsapi.org/v2/",
+      pathRewrite: { "^/api/": "" }
+    }
   },
   env: {
     NEWS_API_KEY: "efb76a46f0f340b9bd1c3c45e3122848"
