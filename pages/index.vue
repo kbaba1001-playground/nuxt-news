@@ -1,5 +1,20 @@
 <template>
-  <div class="md-layout md-alignment-center">
+  <div class="md-layout md-alignment-center" style="margin: 4em 0;">
+    <!-- Top Navigation -->
+    <md-toolbar class="fixed-toolbar" elevation="1">
+      <md-button class="md-icon-button">
+        <md-icon>menu</md-icon>
+      </md-button>
+      <nuxt-link class="md-primary md-title" to="/">
+        NuxtNews
+      </nuxt-link>
+
+      <div class="md-toolbar-section-end">
+        <md-button to="/login">Login</md-button>
+        <md-button to="/register">Register</md-button>
+      </div>
+    </md-toolbar>
+
     <!-- App content -->
     <div class="md-layout-item md-size-95">
       <md-content
@@ -72,5 +87,11 @@ export default {
 <style scoped>
 .small-icon {
   font-size: 18px !important;
+}
+
+.fixed-toolbar {
+  position: fixed;
+  top: 0;
+  z-index: 5;
 }
 </style>
