@@ -12,8 +12,29 @@
       <div class="md-toolbar-section-end">
         <md-button to="/login">Login</md-button>
         <md-button to="/register">Register</md-button>
+        <md-button class="md-accent" @click="showSidepanel = true">Categories</md-button>
       </div>
     </md-toolbar>
+
+    <!-- News categories -->
+    <md-drawer class="md-right" md-fixed :md-active.sync="showSidepanel">
+      <md-toolbar :md-elevation="1">
+        <span class="md-title">New Categories</span>
+      </md-toolbar>
+
+      <md-progress-bar v-if="loading" md-mode='indeterminate'></md-progress-bar>
+
+      <md-list>
+        <md-subheader class="md-primary">
+          Categories
+        </md-subheader>
+
+        <md-list-item v-for="(newsCategory, i) in newsCategories" :key="i" @click="loadCategory(newsCategory.path)">
+          <md-icon :class="newsCategory.path === category ? 'md-primary' : ''">{{newsCategory.icon}}</md-icon>
+          <span class="md-list-item-text">{{newsCategory.name}}</span>
+        </md-list-item>
+      </md-list>
+    </md-drawer>
 
     <!-- App content -->
     <div class="md-layout-item md-size-95">
@@ -74,12 +95,36 @@
 
 <script>
 export default {
+  data: () => ({
+    showSidepanel: false,
+    newsCategories: [
+      { name: 'Top Headlines', path: '', icon: 'today' },
+      { name: 'Technology', path: 'technology', icon: 'keyboard' },
+      { name: 'business', path: 'business', icon: 'business_center' },
+      { name: 'Entertainment', path: 'entertainment', icon: 'weekend' },
+      { name: 'Health', path: 'health', icon: 'fastfood' },
+      { name: 'Science', path: 'sience', icon: 'fingerprint' },
+      { name: 'Sports', path: 'sports', icon: 'golf_course' },
+    ]
+  }),
   async fetch({store}) {
-    await store.dispatch('loadHeadlines', '/api/top-headlines?country=us')
+    await store.dispatch('loadHeadlines', `/api/top-headlines?country=us&category=${store.state.category}`)
   },
   computed: {
     headlines() {
       return this.$store.getters.headlines;
+    },
+    category() {
+      return this.$store.getters.category;
+    },
+    loading() {
+      return this.$store.getters.loading;
+    }
+  },
+  methods: {
+    async loadCategory(category) {
+      this.$store.commit('setCategory', category)
+      await this.$store.dispatch('loadHeadlines', `/api/top-headlines?country=us&category=${this.category}`)
     }
   }
 };
