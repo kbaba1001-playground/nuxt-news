@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 export default {
   mode: "spa",
   /*
@@ -57,10 +59,14 @@ export default {
     "/api/": {
       target: "http://newsapi.org/v2/",
       pathRewrite: { "^/api/": "" }
+    },
+    "/register/": {
+      target: `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.FIREBASE_API_KEY}`,
+      pathRewrite: { "^/register/": "" }
     }
   },
   env: {
-    NEWS_API_KEY: "efb76a46f0f340b9bd1c3c45e3122848"
+    NEWS_API_KEY: process.env.NEWS_API_KEY
   },
   /*
    ** Build configuration
