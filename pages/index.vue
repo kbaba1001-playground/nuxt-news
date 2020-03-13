@@ -121,7 +121,10 @@
               </md-card-content>
 
               <md-card-actions>
-                <md-button class="md-icon-button">
+                <md-button
+                  @click="addHeadlineToFeed(headline)"
+                  class="md-icon-button"
+                >
                   <md-icon>bookmark</md-icon>
                 </md-button>
                 <md-button class="md-icon-button">
@@ -192,6 +195,11 @@ export default {
         "loadHeadlines",
         `/api/top-headlines?country=${this.country}&category=${this.category}`
       );
+    },
+    async addHeadlineToFeed(headline) {
+      if (this.user) {
+        await this.$store.dispatch("addHeadlineToFeed", headline);
+      }
     },
     changeCountry(country) {
       this.$store.commit("setCountry", country);

@@ -42,6 +42,13 @@ const createStore = () => {
         commit("setLoading", false);
         commit("setHeadlines", articles);
       },
+      async addHeadlineToFeed({ state }, headline) {
+        const feedRef = db
+          .collection(`users/${state.user.email}/feed`)
+          .doc(headline.title);
+
+        await feedRef.set(headline);
+      },
       async authenticateUser({ commit }, userPayload) {
         try {
           commit("setLoading", true);
