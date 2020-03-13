@@ -12,16 +12,18 @@
       <div class="md-toolbar-section-end">
         <template v-if="isAuthenticated">
           <md-button>
-            <md-avatar><img :src="user.avatar" :alt="user.email"></md-avatar>
-            {{user.email}}
+            <md-avatar><img :src="user.avatar" :alt="user.email"/></md-avatar>
+            {{ user.email }}
           </md-button>
-          <md-button>Logout</md-button>
+          <md-button @click="logoutUser">Logout</md-button>
         </template>
         <template v-else>
           <md-button to="/login">Login</md-button>
           <md-button to="/register">Register</md-button>
         </template>
-        <md-button class="md-accent" @click="showRightSidepanel = true">Categories</md-button>
+        <md-button class="md-accent" @click="showRightSidepanel = true"
+          >Categories</md-button
+        >
       </div>
     </md-toolbar>
 
@@ -35,7 +37,12 @@
 
       <md-field>
         <label for="country">Country</label>
-        <md-select @input="changeCountry" :value="country" name="country" id="country">
+        <md-select
+          @input="changeCountry"
+          :value="country"
+          name="country"
+          id="country"
+        >
           <md-option value="us">United States</md-option>
           <md-option value="ca">Canada</md-option>
           <md-option value="de">Germany</md-option>
@@ -51,16 +58,23 @@
         <span class="md-title">New Categories</span>
       </md-toolbar>
 
-      <md-progress-bar v-if="loading" md-mode='indeterminate'></md-progress-bar>
+      <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
 
       <md-list>
         <md-subheader class="md-primary">
           Categories
         </md-subheader>
 
-        <md-list-item v-for="(newsCategory, i) in newsCategories" :key="i" @click="loadCategory(newsCategory.path)">
-          <md-icon :class="newsCategory.path === category ? 'md-primary' : ''">{{newsCategory.icon}}</md-icon>
-          <span class="md-list-item-text">{{newsCategory.name}}</span>
+        <md-list-item
+          v-for="(newsCategory, i) in newsCategories"
+          :key="i"
+          @click="loadCategory(newsCategory.path)"
+        >
+          <md-icon
+            :class="newsCategory.path === category ? 'md-primary' : ''"
+            >{{ newsCategory.icon }}</md-icon
+          >
+          <span class="md-list-item-text">{{ newsCategory.name }}</span>
         </md-list-item>
       </md-list>
     </md-drawer>
@@ -128,21 +142,27 @@ export default {
     showLeftSidepanel: false,
     showRightSidepanel: false,
     newsCategories: [
-      { name: 'Top Headlines', path: '', icon: 'today' },
-      { name: 'Technology', path: 'technology', icon: 'keyboard' },
-      { name: 'business', path: 'business', icon: 'business_center' },
-      { name: 'Entertainment', path: 'entertainment', icon: 'weekend' },
-      { name: 'Health', path: 'health', icon: 'fastfood' },
-      { name: 'Science', path: 'sience', icon: 'fingerprint' },
-      { name: 'Sports', path: 'sports', icon: 'golf_course' },
+      { name: "Top Headlines", path: "", icon: "today" },
+      { name: "Technology", path: "technology", icon: "keyboard" },
+      { name: "business", path: "business", icon: "business_center" },
+      { name: "Entertainment", path: "entertainment", icon: "weekend" },
+      { name: "Health", path: "health", icon: "fastfood" },
+      { name: "Science", path: "sience", icon: "fingerprint" },
+      { name: "Sports", path: "sports", icon: "golf_course" }
     ]
   }),
-  async fetch({store}) {
-    await store.dispatch('loadHeadlines', `/api/top-headlines?country=${store.state.country}&category=${store.state.category}`)
+  async fetch({ store }) {
+    await store.dispatch(
+      "loadHeadlines",
+      `/api/top-headlines?country=${store.state.country}&category=${store.state.category}`
+    );
   },
   watch: {
     async country() {
-      await this.$store.dispatch('loadHeadlines', `/api/top-headlines?country=${this.country}&category=${this.category}`)
+      await this.$store.dispatch(
+        "loadHeadlines",
+        `/api/top-headlines?country=${this.country}&category=${this.category}`
+      );
     }
   },
   computed: {
@@ -167,11 +187,17 @@ export default {
   },
   methods: {
     async loadCategory(category) {
-      this.$store.commit('setCategory', category)
-      await this.$store.dispatch('loadHeadlines', `/api/top-headlines?country=${this.country}&category=${this.category}`)
+      this.$store.commit("setCategory", category);
+      await this.$store.dispatch(
+        "loadHeadlines",
+        `/api/top-headlines?country=${this.country}&category=${this.category}`
+      );
     },
     changeCountry(country) {
-      this.$store.commit('setCountry', country);
+      this.$store.commit("setCountry", country);
+    },
+    logoutUser() {
+      this.$store.dispatch("logoutUser");
     }
   }
 };

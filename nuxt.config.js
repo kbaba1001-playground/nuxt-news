@@ -1,7 +1,10 @@
-require('dotenv').config()
+require("dotenv").config();
 
 export default {
   mode: "spa",
+  router: {
+    middleware: "check-auth"
+  },
   /*
    ** Headers of the page
    */
@@ -39,13 +42,15 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: "~/plugins/vue-material" }, { src: "~/plugins/axios" }, {src: "~/plugins/firestore"}],
+  plugins: [
+    { src: "~/plugins/vue-material" },
+    { src: "~/plugins/axios" },
+    { src: "~/plugins/firestore" }
+  ],
   /*
    ** Nuxt.js dev-modules
    */
-  buildModules: [
-    '@nuxtjs/dotenv'
-  ],
+  buildModules: ["@nuxtjs/dotenv"],
   /*
    ** Nuxt.js modules
    */
@@ -71,8 +76,7 @@ export default {
       pathRewrite: { "^/login/": "" }
     }
   },
-  env: {
-  },
+  env: {},
   /*
    ** Build configuration
    */
