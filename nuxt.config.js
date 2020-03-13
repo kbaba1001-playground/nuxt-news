@@ -65,6 +65,10 @@ export default {
     "/register/": {
       target: `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.FIREBASE_API_KEY}`,
       pathRewrite: { "^/register/": "" }
+    },
+    "/login/": {
+      target: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
+      pathRewrite: { "^/login/": "" }
     }
   },
   env: {
