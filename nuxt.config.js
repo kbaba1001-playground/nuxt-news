@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config()
 
 export default {
   mode: "spa",
@@ -39,11 +39,13 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: "~/plugins/vue-material" }, { src: "~/plugins/axios" }],
+  plugins: [{ src: "~/plugins/vue-material" }, { src: "~/plugins/axios" }, {src: "~/plugins/firestore"}],
   /*
    ** Nuxt.js dev-modules
    */
-  buildModules: [],
+  buildModules: [
+    '@nuxtjs/dotenv'
+  ],
   /*
    ** Nuxt.js modules
    */
@@ -66,7 +68,6 @@ export default {
     }
   },
   env: {
-    NEWS_API_KEY: process.env.NEWS_API_KEY
   },
   /*
    ** Build configuration
