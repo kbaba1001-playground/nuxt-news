@@ -1,13 +1,15 @@
 import Vuex from "vuex";
+import md5 from "md5";
 
 const createStore = () => {
   return new Vuex.Store({
     state: {
       headlines: [],
       loading: false,
+      user: null,
       token: "",
       category: "",
-      country: "us"
+      country: "us",
     },
     mutations: {
       setHeadlines(state, headlines) {
@@ -18,6 +20,9 @@ const createStore = () => {
       },
       setToken(state, token) {
         state.token = token;
+      },
+      setUser(state, user) {
+        state.user = user
       },
       setCategory(state, category) {
         state.category = category;
@@ -40,6 +45,9 @@ const createStore = () => {
             "/register/",
             userPayload
           );
+          const avatar = `http://gravatar.com/avatar/${md5(authUserData.email)}?d=identicon`;
+          const user = { email: authUserData.email, avatar };
+          commit("setUser", user);
           commit("setToken", authUserData.idToken);
           commit("setLoading", false);
         } catch (err) {
@@ -51,6 +59,7 @@ const createStore = () => {
     getters: {
       headlines: state => state.headlines,
       loading: state => state.loading,
+      user: state => state.user,
       isAuthenticated: state => !!state.token,
       category: state => state.category,
       country: state => state.country
