@@ -7,6 +7,7 @@ const createStore = () => {
   return new Vuex.Store({
     state: {
       headlines: [],
+      feed: [],
       loading: false,
       user: null,
       token: "",
@@ -32,6 +33,9 @@ const createStore = () => {
       setCountry(state, country) {
         state.country = country;
       },
+      setFeed(state, headlines) {
+        state.feed = headlines;
+      },
       clearToken: state => (state.token = ""),
       clearUser: state => (state.user = null)
     },
@@ -48,6 +52,19 @@ const createStore = () => {
           .doc(headline.title);
 
         await feedRef.set(headline);
+      },
+      async loadUserFeed({ state }) {
+        if (state.user) {
+          const feedRef = db.collection(`users/${state.user.email}/feed`);
+
+          await feedRef.get().then(querySnapshot => {
+            let headlines = [];
+            querySnapshot.forEach(doc => {
+              headlines.push(doc.data());
+              this.commit("setFeed", headlines);
+            });
+          });
+        }
       },
       async authenticateUser({ commit }, userPayload) {
         try {
@@ -99,6 +116,7 @@ const createStore = () => {
     },
     getters: {
       headlines: state => state.headlines,
+      feed: state => state.feed,
       loading: state => state.loading,
       user: state => state.user,
       isAuthenticated: state => !!state.token,
