@@ -1,5 +1,6 @@
 import Vuex from "vuex";
 import md5 from "md5";
+import slugify from "slugify";
 import db from "~/plugins/firestore";
 import { saveUserData, clearUserData } from "~/utils";
 
@@ -44,8 +45,17 @@ const createStore = () => {
       async loadHeadlines({ commit }, apiUrl) {
         commit("setLoading", true);
         const { articles } = await this.$axios.$get(apiUrl);
+        const headlines = articles.map(article => {
+          const slug = slugify(article.title, {
+            replacement: "-",
+            remove: /[^a-zA-Z0-9 -]/g,
+            lower: true
+          });
+          const headline = { ...article, slug };
+          return headline;
+        });
         commit("setLoading", false);
-        commit("setHeadlines", articles);
+        commit("setHeadlines", headlines);
       },
       async addHeadlineToFeed({ state }, headline) {
         const feedRef = db
