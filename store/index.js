@@ -64,8 +64,20 @@ const createStore = () => {
               headlines.push(doc.data());
               this.commit("setFeed", headlines);
             });
+
+            if (querySnapshot.empty) {
+              headlines = [];
+              this.commit("setFeed", headlines);
+            }
           });
         }
+      },
+      async removeHeadlineFromFeed({ state }, headline) {
+        const headlineRef = db
+          .collection(`users/${state.user.email}/feed`)
+          .doc(headline.title);
+
+        await headlineRef.delete();
       },
       async authenticateUser({ commit }, userPayload) {
         try {
