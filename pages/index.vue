@@ -152,6 +152,7 @@
                 <md-button
                   @click="addHeadlineToFeed(headline)"
                   class="md-icon-button"
+                  :class="isInFeed(headline.title)"
                 >
                   <md-icon>bookmark</md-icon>
                 </md-button>
@@ -238,6 +239,11 @@ export default {
     },
     logoutUser() {
       this.$store.dispatch("logoutUser");
+    },
+    isInFeed(title) {
+      const inFeed =
+        this.feed.findIndex(headline => headline.title === title) > -1;
+      return inFeed ? "md-primary" : "";
     }
   }
 };
