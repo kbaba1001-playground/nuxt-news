@@ -51,6 +51,24 @@
         </md-select>
       </md-field>
 
+      <md-empty-state
+        class="md-primary"
+        v-if="feed.length === 0 && !user"
+        md-icon="bookmarks"
+        md-label="Nothing in Feed"
+        md-description="Login to bookmark headlines"
+      >
+        <md-button class="md-primary md-raised" to="/login">Login</md-button>
+      </md-empty-state>
+
+      <md-empty-state
+        class="md-accent"
+        md-icon="bookmark_outline"
+        md-label="Nothing in Feed"
+        md-description="Anything you bookmark will be safely stored here"
+        v-else-if="feed.length === 0"
+      ></md-empty-state>
+
       <!-- Feed content -->
       <md-list
         class="md-triple-line"
