@@ -48,24 +48,26 @@ const createStore = () => {
     actions: {
       async loadHeadline({ commit }, headlineSlug) {
         const headlineRef = db.collection("headlines").doc(headlineSlug);
-        const commentsRef = db.collection(`headlines/${headlineSlug}/comments`);
+        const commentsRef = db
+          .collection(`headlines/${headlineSlug}/comments`)
+          .orderBy("likes", "desc");
 
-        let loadedHeadline = {}
+        let loadedHeadline = {};
         await headlineRef.get().then(async doc => {
           if (doc.exists) {
-            loadedHeadline = doc.data()
+            loadedHeadline = doc.data();
 
             await commentsRef.get().then(querySnapshot => {
               if (querySnapshot.empty) {
-                commit('setHeadline', loadedHeadline)
+                commit("setHeadline", loadedHeadline);
               }
               let loadedComments = [];
               querySnapshot.forEach(doc => {
-                loadedComments.push(doc.data())
-                loadedHeadline['comments'] = loadedComments
-                commit('setHeadline', loadedHeadline);
-              })
-            })
+                loadedComments.push(doc.data());
+                loadedHeadline["comments"] = loadedComments;
+                commit("setHeadline", loadedHeadline);
+              });
+            });
           }
         });
       },
@@ -76,15 +78,50 @@ const createStore = () => {
 
         this.commit("setLoading", true);
         await commentsRef.doc(comment.id).set(comment);
-        await commentsRef.get().then(querySnapshot => {
-          let comments = [];
+        await commentsRef
+          .orderBy("likes", "desc")
+          .get()
+          .then(querySnapshot => {
+            let comments = [];
+            querySnapshot.forEach(doc => {
+              comments.push(doc.data());
+              const updatedHeadline = { ...state.headline, comments };
+              this.commit("setHeadline", updatedHeadline);
+            });
+          });
+        this.commit("setLoading", false);
+      },
+      async likeComment({ state, commit }, commentId) {
+        const commentsRef = db
+          .collection(`headlines/${state.headline.slug}/comments`)
+          .orderBy("likes", "desc");
+        const likedCommentRef = db
+          .collection("headlines")
+          .doc(state.headline.slug)
+          .collection("comments")
+          .doc(commentId);
+
+        await likedCommentRef.get().then(doc => {
+          if (doc.exists) {
+            const prevLikes = doc.data().likes;
+            const currentLikes = prevLikes + 1;
+            likedCommentRef.update({
+              likes: currentLikes
+            });
+          }
+        });
+
+        await commentsRef.onSnapshot(querySnapshot => {
+          let loadedComments = [];
           querySnapshot.forEach(doc => {
-            comments.push(doc.data());
-            const updatedHeadline = { ...state.headline, comments };
-            this.commit("setHeadline", updatedHeadline);
+            loadedComments.push(doc.data());
+            const updatedHeadline = {
+              ...state.headline,
+              comments: loadedComments
+            };
+            commit("setHeadline", updatedHeadline);
           });
         });
-        this.commit("setLoading", false);
       },
       async saveHeadline({ commit }, headline) {
         const headlineRef = db.collection("headlines").doc(headline.slug);
