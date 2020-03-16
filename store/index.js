@@ -42,6 +42,20 @@ const createStore = () => {
       clearFeed: state => (state.feed = [])
     },
     actions: {
+      async saveHeadline(context, headline) {
+        const headlineRef = db.collection("headlines").doc(headline.slug);
+
+        let headlineId;
+        await headlineRef.get().then(doc => {
+          if (doc.exists) {
+            headlineId = doc.id;
+          }
+        });
+
+        if (!headlineId) {
+          await headlineRef.set(headline);
+        }
+      },
       async loadHeadlines({ commit }, apiUrl) {
         commit("setLoading", true);
         const { articles } = await this.$axios.$get(apiUrl);

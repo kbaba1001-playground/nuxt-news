@@ -5,14 +5,14 @@
       <md-button @click="showLeftSidepanel = true" class="md-icon-button">
         <md-icon>menu</md-icon>
       </md-button>
-      <nuxt-link class="md-primary md-title" to="/">
-        NuxtNews
-      </nuxt-link>
+      <nuxt-link class="md-primary md-title" to="/">NuxtNews</nuxt-link>
 
       <div class="md-toolbar-section-end">
         <template v-if="isAuthenticated">
           <md-button>
-            <md-avatar><img :src="user.avatar" :alt="user.email"/></md-avatar>
+            <md-avatar>
+              <img :src="user.avatar" :alt="user.email" />
+            </md-avatar>
             {{ user.email }}
           </md-button>
           <md-button @click="logoutUser">Logout</md-button>
@@ -21,9 +21,7 @@
           <md-button to="/login">Login</md-button>
           <md-button to="/register">Register</md-button>
         </template>
-        <md-button class="md-accent" @click="showRightSidepanel = true"
-          >Categories</md-button
-        >
+        <md-button class="md-accent" @click="showRightSidepanel = true">Categories</md-button>
       </div>
     </md-toolbar>
 
@@ -37,12 +35,7 @@
 
       <md-field>
         <label for="country">Country</label>
-        <md-select
-          @input="changeCountry"
-          :value="country"
-          name="country"
-          id="country"
-        >
+        <md-select @input="changeCountry" :value="country" name="country" id="country">
           <md-option value="us">United States</md-option>
           <md-option value="ca">Canada</md-option>
           <md-option value="de">Germany</md-option>
@@ -70,22 +63,20 @@
       ></md-empty-state>
 
       <!-- Feed content -->
-      <md-list
-        class="md-triple-line"
-        v-for="headline in feed"
-        :key="headline.id"
-      >
+      <md-list class="md-triple-line" v-for="headline in feed" :key="headline.id">
         <md-list-item>
           <md-avatar>
             <img :src="headline.urlToImage" :alt="headline.title" />
           </md-avatar>
 
           <div class="md-list-item-text">
-            <span
-              ><a :href="headline.url" target="_blank">{{
+            <span>
+              <a :href="headline.url" target="_blank">
+                {{
                 headline.title
-              }}</a></span
-            >
+                }}
+              </a>
+            </span>
             <span>{{ headline.source.name }}</span>
             <span>View Comments</span>
           </div>
@@ -110,9 +101,7 @@
       <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
 
       <md-list>
-        <md-subheader class="md-primary">
-          Categories
-        </md-subheader>
+        <md-subheader class="md-primary">Categories</md-subheader>
 
         <md-list-item
           v-for="(newsCategory, i) in newsCategories"
@@ -121,8 +110,7 @@
         >
           <md-icon
             :class="newsCategory.path === category ? 'md-primary' : ''"
-            >{{ newsCategory.icon }}</md-icon
-          >
+          >{{ newsCategory.icon }}</md-icon>
           <span class="md-list-item-text">{{ newsCategory.name }}</span>
         </md-list-item>
       </md-list>
@@ -130,10 +118,7 @@
 
     <!-- App content -->
     <div class="md-layout-item md-size-95">
-      <md-content
-        class="md-layout md-gutter"
-        style="background: #007998; padding: 1em;"
-      >
+      <md-content class="md-layout md-gutter" style="background: #007998; padding: 1em;">
         <ul
           v-for="headline in headlines"
           :key="headline.id"
@@ -147,9 +132,11 @@
 
               <md-card-header>
                 <div class="md-title">
-                  <a :href="headline.url" target="_blank">{{
+                  <a :href="headline.url" target="_blank">
+                    {{
                     headline.title
-                  }}</a>
+                    }}
+                  </a>
                 </div>
                 <div>
                   {{ headline.source.name }}
@@ -165,9 +152,7 @@
                 </div>
               </md-card-header>
 
-              <md-card-content>
-                {{ headline.description }}
-              </md-card-content>
+              <md-card-content>{{ headline.description }}</md-card-content>
 
               <md-card-actions>
                 <md-button
@@ -177,10 +162,7 @@
                 >
                   <md-icon>bookmark</md-icon>
                 </md-button>
-                <md-button
-                  class="md-icon-button"
-                  @click="saveHeadline(headline)"
-                >
+                <md-button class="md-icon-button" @click="saveHeadline(headline)">
                   <md-icon>message</md-icon>
                 </md-button>
               </md-card-actions>
@@ -262,7 +244,9 @@ export default {
       await this.$store.dispatch("removeHeadlineFromFeed", headline);
     },
     saveHeadline(headline) {
-      this.$router.push(`/headlines/${headline.slug}`);
+      this.$store.dispatch("saveHeadline", headline).then(() => {
+        this.$router.push(`/headlines/${headline.slug}`);
+      });
     },
     changeCountry(country) {
       this.$store.commit("setCountry", country);
