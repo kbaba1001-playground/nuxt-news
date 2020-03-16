@@ -47,14 +47,31 @@ const createStore = () => {
     },
     actions: {
       async loadHeadline({ commit }, headlineSlug) {
-        const headlineRef = db.collection('headlines').doc(headlineSlug);
+        const headlineRef = db.collection("headlines").doc(headlineSlug);
 
         await headlineRef.get().then(doc => {
           if (doc.exists) {
             const headline = doc.data();
-            commit('setHeadline', headline);
+            commit("setHeadline", headline);
           }
-        })
+        });
+      },
+      async sendComment({ state }, comment) {
+        const commentsRef = db.collection(
+          `headlines/${state.headline.slug}/comments`
+        );
+
+        this.commit("setLoading", true);
+        await commentsRef.doc(comment.id).set(comment);
+        await commentsRef.get().then(querySnapshot => {
+          let comments = [];
+          querySnapshot.forEach(doc => {
+            comments.push(doc.data());
+            const updatedHeadline = { ...state.headline, comments };
+            this.commit("setHeadline", updatedHeadline);
+          });
+        });
+        this.commit("setLoading", false);
       },
       async saveHeadline(context, headline) {
         const headlineRef = db.collection("headlines").doc(headline.slug);
